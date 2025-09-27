@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Flappy Bird</title>
+  <style>
+    body { margin:0; display:flex; justify-content:center; align-items:center; height:100vh; background:#70c5ce; }
+    canvas { background:#70c5ce; }
+  </style>
+</head>
+<body>
+<canvas id="game" width="320" height="480"></canvas>
+<script>
+const cvs=document.getElementById("game"), ctx=cvs.getContext("2d");
+let bird={x:50,y:150,gravity:1.5,velocity:0};
+let pipes=[],score=0; pipes[0]={x:cvs.width,y:0};
+
+document.addEventListener("keydown",()=>bird.velocity=-20);
+
+function draw(){
+  ctx.fillStyle="#70c5ce"; ctx.fillRect(0,0,cvs.width,cvs.height);
+  for(let i=0;i<pipes.length;i++){
+    let pipeH=150, gap=120;
+    ctx.fillStyle="green";
+    ctx.fillRect(pipes[i].x,pipes[i].y,50,pipeH);
+    ctx.fillRect(pipes[i].x,pipes[i].y+pipeH+gap,50,cvs.height);
+    pipes[i].x--;
+    if(pipes[i].x==125) pipes.push({x:cvs.width,y:Math.floor(Math.random()*pipeH)-pipeH});
+    if(pipes[i].x==-50) pipes.shift();
+    if(bird.x+20>=pipes[i].x && bird.x<=pipes[i].x+50 &&
+       (bird.y<=pipes[i].y+pipeH || bird.y+20>=pipes[i].y+pipeH+gap)){
+        alert("Game Over! Score: "+score); document.location.reload();
+    }
+    if(pipes[i].x==bird.x) score++;
+  }
+  ctx.fillStyle="yellow"; ctx.fillRect(bird.x,bird.y,20,20);
+  bird.y+=bird.gravity+bird.velocity*0.1; bird.velocity+=1.5;
+  if(bird.y+20>=cvs.height){ alert("Game Over! Score: "+score); document.location.reload(); }
+  ctx.fillStyle="black"; ctx.fillText("Score: "+score,10,20);
+}
+setInterval(draw,20);
+</script>
+</body>
+</html>
